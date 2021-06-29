@@ -1,4 +1,4 @@
-package cn.atong.leek.easyexcel.leekeasyexcel.domain.Entity;
+package cn.atong.leek.easyexcel.leekeasyexcel.domain.entity;
 
 /**
  * @program: leek-easyexcel
