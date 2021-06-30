@@ -1,7 +1,7 @@
 package cn.atong.leek.easyexcel.leekeasyexcel.easy;
 
 import cn.atong.leek.easyexcel.leekeasyexcel.domain.excel.UserTemplate;
-import cn.atong.leek.easyexcel.leekeasyexcel.mapper.UserMapper;
+import cn.atong.leek.easyexcel.leekeasyexcel.service.UserService;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
@@ -26,20 +26,15 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
     /**
      * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
      */
-    private UserMapper userMapper;
-
-    public ExcelListener() {
-        // 这里是demo，所以随便new一个。实际使用如果到了spring,请使用下面的有参构造函数
-        userMapper = new UserMapper();
-    }
+    private UserService userService;
 
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
      *
-     * @param userMapper
+     * @param userService
      */
-    public ExcelListener(UserMapper userMapper) {
-        this.userMapper = userMapper;
+    public ExcelListener(UserService userService) {
+        this.userService = userService;
     }
 
     /**
@@ -55,7 +50,7 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
         list.add(data);
         // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
         if (list.size() >= BATCH_COUNT) {
-            saveData();
+            dataProcess();
             // 存储完成清理 list
             list.clear();
         }
@@ -69,16 +64,16 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
     @Override
     public void doAfterAllAnalysed(AnalysisContext context) {
         // 这里也要保存数据，确保最后遗留的数据也存储到数据库
-        saveData();
+        dataProcess();
         log.info("所有数据解析完成！");
     }
 
     /**
-     * 加上存储数据库
+     * 导入数据处理
      */
-    private void saveData() {
-        log.info("{}条数据，开始存储数据库！", list.size());
-        userMapper.save(list);
-        log.info("存储数据库成功！");
+    private void dataProcess() {
+        log.info("{}条数据，开始处理导入数据！", list.size());
+        userService.importDataProcess(list);
+        log.info("处理导入数据成功！");
     }
 }

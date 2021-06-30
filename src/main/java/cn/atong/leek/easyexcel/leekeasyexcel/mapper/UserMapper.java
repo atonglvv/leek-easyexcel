@@ -1,6 +1,7 @@
 package cn.atong.leek.easyexcel.leekeasyexcel.mapper;
 
-import cn.atong.leek.easyexcel.leekeasyexcel.domain.excel.UserTemplate;
+import cn.atong.leek.easyexcel.leekeasyexcel.domain.entity.User;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 
 import java.util.List;
 
@@ -10,8 +11,5 @@ import java.util.List;
  * @author: atong
  * @create: 2021-06-29 20:19
  */
-public class UserMapper {
-    public void save(List<UserTemplate> list) {
-        System.out.println("save");
-    }
+public interface UserMapper extends BaseMapper<User> {
 }
