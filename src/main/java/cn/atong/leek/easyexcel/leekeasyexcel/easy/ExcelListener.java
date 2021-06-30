@@ -6,6 +6,9 @@ import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +26,7 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
      */
     private static final int BATCH_COUNT = 5;
     List<UserTemplate> list = new ArrayList<UserTemplate>();
+
     /**
      * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
      */
@@ -72,6 +76,9 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
      * 导入数据处理
      */
     private void dataProcess() {
+        if (CollectionUtils.isEmpty(list)) {
+            return;
+        }
         log.info("{}条数据，开始处理导入数据！", list.size());
         userService.importDataProcess(list);
         log.info("处理导入数据成功！");
