@@ -4,6 +4,7 @@ import cn.atong.leek.easyexcel.leekeasyexcel.domain.entity.User;
 import cn.atong.leek.easyexcel.leekeasyexcel.domain.excel.UserTemplate;
 import cn.atong.leek.easyexcel.leekeasyexcel.mapper.UserMapper;
 import cn.atong.leek.easyexcel.leekeasyexcel.service.UserService;
+import com.alibaba.fastjson.JSON;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -43,6 +44,7 @@ public class UserServiceImpl implements UserService {
         if (CollectionUtils.isEmpty(userTemplates)) {
             return null;
         }
+        System.out.println("userTemplate = " + JSON.toJSONString(userTemplates));
         System.out.println("处理数据");
         return null;
     }

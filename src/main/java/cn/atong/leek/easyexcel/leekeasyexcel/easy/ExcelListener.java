@@ -7,11 +7,10 @@ import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: leek-easyexcel
@@ -28,14 +27,13 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
     List<UserTemplate> list = new ArrayList<UserTemplate>();
 
     /**
-     * 假设这个是一个DAO，当然有业务逻辑这个也可以是一个service。当然如果不用存储这个对象没用。
+     * 处理导入数据业务逻辑的 Service
      */
     private UserService userService;
 
     /**
      * 如果使用了spring,请使用这个构造方法。每次创建Listener的时候需要把spring管理的类传进来
-     *
-     * @param userService
+     * @param userService userService
      */
     public ExcelListener(UserService userService) {
         this.userService = userService;
@@ -72,6 +70,22 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
         log.info("所有数据解析完成！");
     }
 
+
+    /**
+     * @description 校验表头是否与模板一致
+     * @param headMap: Map
+     * @param context: AnalysisContext
+     * @return void
+     * @author atong
+     * @date 2021/7/1 10:45
+     * @version 1.0.0.1
+     */
+    @Override
+    public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
+        log.info("解析到一条头数据:{}", JSON.toJSONString(headMap));
+        // 根据自己的情况去做表头的判断即可
+    }
+
     /**
      * 导入数据处理
      */
@@ -80,6 +94,7 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
             return;
         }
         log.info("{}条数据，开始处理导入数据！", list.size());
+        log.info("导入的数据为{}", JSON.toJSONString(list));
         userService.importDataProcess(list);
         log.info("处理导入数据成功！");
     }
