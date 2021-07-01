@@ -5,6 +5,7 @@ import cn.atong.leek.easyexcel.leekeasyexcel.exception.ExcelHeadMatchException;
 import cn.atong.leek.easyexcel.leekeasyexcel.service.UserService;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
+import com.alibaba.excel.exception.ExcelAnalysisException;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
@@ -24,9 +25,9 @@ import java.util.Map;
 @Slf4j
 public class ExcelListener extends AnalysisEventListener<UserTemplate> {
     /**
-     * 每隔5条存储数据库，实际使用中可以3000条，然后清理list ，方便内存回收
+     * 每隔500条做业务处理，建议不超过3000条，然后清理list ，方便内存回收
      */
-    private static final int BATCH_COUNT = 5;
+    private static final int BATCH_COUNT = 3;
     List<UserTemplate> list = new ArrayList<UserTemplate>();
 
     /**
@@ -53,11 +54,11 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
     public void invoke(UserTemplate data, AnalysisContext context) {
         log.info("解析到一条数据:{}", JSON.toJSONString(data));
         list.add(data);
-        // 达到BATCH_COUNT了，需要去存储一次数据库，防止数据几万条数据在内存，容易OOM
+        // 达到BATCH_COUNT了，需要去处理一次业务数据，防止OOM
         if (list.size() >= BATCH_COUNT) {
-            dataProcess();
             // 存储完成清理 list
             list.clear();
+            throw new ExcelAnalysisException("导入的数据超过1000条，请将导入数据控制在1000条以内");
         }
     }
 
