@@ -37,7 +37,9 @@ public class EasyExcelController {
         }
         InputStream excelInputStream = FileDownloadUtil.getStreamByUrl(importUrl);
         try {
-            EasyExcel.read(excelInputStream, UserTemplate.class, new ExcelListener(userService)).sheet().doRead();
+            //head设为两行
+            EasyExcel.read(excelInputStream, UserTemplate.class, new ExcelListener(userService))
+                    .sheet().headRowNumber(2).doRead();
         }catch (ExcelHeadMatchException excelHeadMatchException) {
             return "fail";
         }catch (ExcelAnalysisException excelAnalysisException) {
