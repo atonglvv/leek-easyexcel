@@ -1,12 +1,15 @@
 package cn.atong.leek.easyexcel.leekeasyexcel.easy;
 
 import cn.atong.leek.easyexcel.leekeasyexcel.domain.excel.UserTemplate;
+import cn.atong.leek.easyexcel.leekeasyexcel.exception.ExcelHeadMatchException;
 import cn.atong.leek.easyexcel.leekeasyexcel.service.UserService;
 import com.alibaba.excel.context.AnalysisContext;
 import com.alibaba.excel.event.AnalysisEventListener;
 import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,7 +75,7 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
 
 
     /**
-     * @description 校验表头是否与模板一致
+     * @description 重写方法,校验表头是否与模板一致
      * @param headMap: Map
      * @param context: AnalysisContext
      * @return void
@@ -81,9 +84,27 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
      * @version 1.0.0.1
      */
     @Override
-    public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) {
-        log.info("解析到一条头数据:{}", JSON.toJSONString(headMap));
-        // 根据自己的情况去做表头的判断即可
+    public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) throws ExcelHeadMatchException{
+        log.info("表头数据:{}", JSON.toJSONString(headMap));
+        // 模板表头
+        String[] tips = {"商品序号", "商品名称", "商品SKU编码", "商品类目（末级）", "商品分类", "是否包邮", "商品标签",
+                "规格1", "规格值", "规格2", "规格值", "规格3", "规格值", "运费模板",
+                "成本价", "售卖价", "库存", "单位计量", "库存预警", "重量", "体积", "商品图片"};
+        //如果 headMap为空或者 headMap跟tips 数量不一致, 则直接throw
+        if (MapUtils.isEmpty(headMap) || tips.length != headMap.size()) {
+            throw new ExcelHeadMatchException("上传文件格式有误，请下载最新模板按要求填写后上传");
+        }
+        for (int i = 0; i < headMap.size(); i++) {
+            String headValue = headMap.get(i);
+            //如果headValue为空 则直接throw
+            if (StringUtils.isBlank(headValue)) {
+                throw new ExcelHeadMatchException("上传文件格式有误，请下载最新模板按要求填写后上传");
+            }
+            //如果headValue的值不等于tips[i] 则直接throw
+            if (! headValue.equals(tips[i])) {
+                throw new ExcelHeadMatchException("上传文件格式有误，请下载最新模板按要求填写后上传");
+            }
+        }
     }
 
     /**

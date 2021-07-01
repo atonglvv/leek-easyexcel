@@ -3,6 +3,7 @@ package cn.atong.leek.easyexcel.leekeasyexcel.controller;
 import cn.atong.leek.easyexcel.leekeasyexcel.domain.dto.ImportDto;
 import cn.atong.leek.easyexcel.leekeasyexcel.domain.excel.UserTemplate;
 import cn.atong.leek.easyexcel.leekeasyexcel.easy.ExcelListener;
+import cn.atong.leek.easyexcel.leekeasyexcel.exception.ExcelHeadMatchException;
 import cn.atong.leek.easyexcel.leekeasyexcel.service.UserService;
 import cn.atong.leek.easyexcel.leekeasyexcel.utils.FileDownloadUtil;
 import com.alibaba.excel.EasyExcel;
@@ -30,7 +31,11 @@ public class EasyExcelController {
     public String importExcel(ImportDto importDto) {
         String importUrl = importDto.getImportUrl();
         InputStream excelInputStream = FileDownloadUtil.getStreamByUrl(importUrl);
-        EasyExcel.read(excelInputStream, UserTemplate.class, new ExcelListener(userService)).sheet().doRead();
+        try {
+            EasyExcel.read(excelInputStream, UserTemplate.class, new ExcelListener(userService)).sheet().doRead();
+        }catch (ExcelHeadMatchException excelHeadMatchException) {
+            return "fail";
+        }
         return "success";
     }
 }
