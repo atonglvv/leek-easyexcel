@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @program: leek-easyexcel
@@ -28,7 +29,10 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
      * 每隔500条做业务处理，建议不超过3000条，然后清理list ，方便内存回收
      */
     private static final int BATCH_COUNT = 3;
+    /** 导入的数据 */
     List<UserTemplate> list = new ArrayList<UserTemplate>();
+    /** 表头行数 */
+    AtomicInteger headNumber = new AtomicInteger(1);
 
     /**
      * 处理导入数据业务逻辑的 Service
@@ -86,9 +90,14 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
      */
     @Override
     public void invokeHeadMap(Map<Integer, String> headMap, AnalysisContext context) throws ExcelHeadMatchException{
+        if (headNumber.get() == 1) {
+            super.invokeHeadMap(headMap, context);
+            headNumber.incrementAndGet();
+            return;
+        }
         log.info("表头数据:{}", JSON.toJSONString(headMap));
         // 模板表头
-        String[] tips = {"商品序号", "商品名称", "商品SKU编码", "商品类目（末级）", "商品分类", "是否包邮", "商品标签",
+        String[] tips = {"商品名称", "规格编码", "商品条码", "商品类目（末级）", "商品分类", "是否包邮", "商品标签",
                 "规格1", "规格值", "规格2", "规格值", "规格3", "规格值", "运费模板",
                 "成本价", "售卖价", "库存", "单位计量", "库存预警", "重量", "体积", "商品图片"};
         //如果 headMap为空或者 headMap跟tips 数量不一致, 则直接throw

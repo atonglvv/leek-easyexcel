@@ -60,6 +60,14 @@ public class UserTemplate {
     @ExcelProperty("售卖价")
     private BigDecimal salePrice;
 
+    /** 模板商品导入需要 售价区间最小值 */
+    @ExcelProperty("售价区间最小值")
+    private BigDecimal salePriceMin;
+
+    /** 模板商品导入需要 售价区间最大值 */
+    @ExcelProperty("售价区间最大值")
+    private BigDecimal salePriceMax;
+
     @ExcelProperty("库存")
     private Integer stock;
 
