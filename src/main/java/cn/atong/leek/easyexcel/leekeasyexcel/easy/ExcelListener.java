@@ -28,7 +28,7 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
     /**
      * 每隔500条做业务处理，建议不超过3000条，然后清理list ，方便内存回收
      */
-    private static final int BATCH_COUNT = 3;
+    private static final int BATCH_COUNT = 500;
     /** 导入的数据 */
     List<UserTemplate> list = new ArrayList<UserTemplate>();
     /** 表头行数 */
@@ -62,7 +62,7 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
         if (list.size() >= BATCH_COUNT) {
             // 存储完成清理 list
             list.clear();
-            throw new ExcelAnalysisException("导入的数据超过1000条，请将导入数据控制在1000条以内");
+            throw new ExcelAnalysisException("导入的数据超过500条，请将导入数据控制在500条以内");
         }
     }
 
@@ -97,9 +97,13 @@ public class ExcelListener extends AnalysisEventListener<UserTemplate> {
         }
         log.info("表头数据:{}", JSON.toJSONString(headMap));
         // 模板表头
-        String[] tips = {"商品名称", "规格编码", "商品条码", "商品类目（末级）", "商品分类", "是否包邮", "商品标签",
-                "规格1", "规格值", "规格2", "规格值", "规格3", "规格值", "运费模板",
-                "成本价", "售卖价", "库存", "单位计量", "库存预警", "重量", "体积", "商品图片"};
+        String[] tips = {
+                "商品名称", "规格编码", "商品条码", "商品类目", "商品分类",
+                "商品标签", "计量单位", "规格1", "规格值", "规格2",
+                "规格值", "规格3", "规格值", "成本价", "售卖价",
+                "库存",  "库存预警", "重量", "体积", "是否支持普通快递",
+                "是否支持上门自提", "是否支持同城配送", "运费模板", "是否包邮", "商品主图链接",
+                "导入结果", "备注"};
         //如果 headMap为空或者 headMap跟tips 数量不一致, 则直接throw
         if (MapUtils.isEmpty(headMap) || tips.length != headMap.size()) {
             throw new ExcelHeadMatchException("上传文件格式有误，请下载最新模板按要求填写后上传");

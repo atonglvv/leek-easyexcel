@@ -39,11 +39,11 @@ public class EasyExcelController {
         try {
             //head设为两行
             EasyExcel.read(excelInputStream, UserTemplate.class, new ExcelListener(userService))
-                    .sheet(3).headRowNumber(2).doRead();
+                    .sheet(6).headRowNumber(2).doRead();
         }catch (ExcelHeadMatchException excelHeadMatchException) {
             return "fail";
         }catch (ExcelAnalysisException excelAnalysisException) {
-            return "too large";
+            return excelAnalysisException.getMessage();
         }
         return "success";
     }

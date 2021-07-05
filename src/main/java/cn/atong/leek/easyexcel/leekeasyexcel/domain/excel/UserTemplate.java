@@ -38,19 +38,20 @@ public class UserTemplate {
     @ExcelProperty("规格1")
     private String specification1Key;
 
-    @ExcelProperty("规格值")
+    /** index 从0开始 */
+    @ExcelProperty(index = 8)
     private String specification1Value;
 
     @ExcelProperty("规格2")
     private String specification2Key;
 
-    @ExcelProperty("规格值")
+    @ExcelProperty(index = 10)
     private String specification2Value;
 
     @ExcelProperty("规格3")
     private String specification3Key;
 
-    @ExcelProperty("规格值")
+    @ExcelProperty(index = 12)
     private String specification3Value;
 
 
@@ -103,5 +104,4 @@ public class UserTemplate {
 
     @ExcelProperty("备注")
     private String comment;
-
 }
